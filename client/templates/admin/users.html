@@ -1,0 +1,5 @@
+{% extends "base.html" %}
+{% block title %}Admin Users{% endblock %}
+{% block content %}
+<section class="content standalone" data-auto-refresh="10000"><div class="page-head"><h1>All users</h1><span class="chip">Auto refreshes</span></div><section class="panel"><div class="table-wrap"><table><thead><tr><th>Name</th><th>Email</th><th>Risk level</th><th>Risk score</th><th>Platforms</th><th>Social accounts</th><th>Consents</th><th>Joined</th></tr></thead><tbody>{% for u in users %}<tr><td>{{ u.name }}</td><td>{{ u.email }}</td><td>{% if u.risks %}<span class="chip {{ u.risks[-1].level|lower }}">{{ u.risks[-1].level }}</span>{% else %}<span class="chip">Not assessed</span>{% endif %}</td><td>{{ u.risks[-1].score if u.risks else '-' }}</td><td>{{ u.platforms|length }}</td><td>{{ u.social_accounts|length }}</td><td>{{ u.consents|length }}</td><td>{{ u.created_at.strftime('%Y-%m-%d') }}</td></tr>{% endfor %}</tbody></table></div></section></section>
+{% endblock %}

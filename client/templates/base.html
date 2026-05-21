@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}Digital Footprint Tracker{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <script defer src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script defer src="{{ url_for('static', filename='js/app.js') }}"></script>
+</head>
+<body>
+    <header class="topbar">
+        <a class="brand" href="{{ url_for('web.landing') }}"><span class="brand-mark">DF</span> Digital Footprint Tracker</a>
+        <nav class="nav">
+            {% if current_user %}
+                {% if current_user.role == 'admin' %}
+                    <a href="{{ url_for('admin.dashboard') }}">Admin</a>
+                    <a class="button ghost" href="{{ url_for('auth.logout') }}">Logout</a>
+                {% else %}
+                    <a href="{{ url_for('web.dashboard') }}">Dashboard</a>
+                    <a href="{{ url_for('web.alerts') }}">Alerts</a>
+                    <a class="button ghost" href="{{ url_for('auth.logout') }}">Logout</a>
+                {% endif %}
+            {% else %}
+                <a href="{{ url_for('auth.login') }}">Login</a>
+                <a class="button" href="{{ url_for('auth.register') }}">Register</a>
+            {% endif %}
+        </nav>
+    </header>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <section class="flash-wrap">
+                {% for category, message in messages %}
+                    <div class="flash {{ category }}">{{ message }}</div>
+                {% endfor %}
+            </section>
+        {% endif %}
+    {% endwith %}
+
+    <main>{% block content %}{% endblock %}</main>
+</body>
+</html>

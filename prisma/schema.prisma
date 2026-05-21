@@ -1,0 +1,212 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id               Int               @id @default(autoincrement())
+  name             String            @db.VarChar(120)
+  email            String            @unique @db.VarChar(180)
+  passwordHash     String            @map("password_hash") @db.VarChar(255)
+  role             String            @default("user") @db.VarChar(20)
+  isActive         Boolean           @default(true) @map("is_active")
+  lastLoginAt      DateTime?         @map("last_login_at")
+  createdAt        DateTime          @default(now()) @map("created_at")
+  updatedAt        DateTime          @updatedAt @map("updated_at")
+  profile          Profile?
+  socialAccounts   SocialAccount[]
+  platforms        ConnectedPlatform[]
+  consents         Consent[]
+  risks            RiskAssessment[]
+  alerts           Alert[]
+  deletionRequests DeletionRequest[]
+  notifications    Notification[]
+  analytics        Analytics[]
+  admin            Admin?
+
+  @@index([role])
+  @@map("user")
+}
+
+model Profile {
+  id             Int      @id @default(autoincrement())
+  userId         Int      @unique @map("user_id")
+  phone          String?  @db.VarChar(30)
+  publicUsername String?  @map("public_username") @db.VarChar(80)
+  location       String?  @db.VarChar(100)
+  privacyGoal    String?  @default("Reduce public exposure") @map("privacy_goal") @db.VarChar(255)
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("profile")
+}
+
+model SocialAccount {
+  id            Int      @id @default(autoincrement())
+  userId        Int      @map("user_id")
+  platform      String   @db.VarChar(80)
+  username      String   @db.VarChar(120)
+  profileUrl    String?  @map("profile_url") @db.VarChar(255)
+  visibility    String   @default("Public") @db.VarChar(30)
+  sensitiveData String?  @default("Email, location") @map("sensitive_data") @db.VarChar(255)
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("social_account")
+}
+
+model ConnectedPlatform {
+  id               Int      @id @default(autoincrement())
+  userId           Int      @map("user_id")
+  name             String   @db.VarChar(120)
+  category         String   @db.VarChar(80)
+  dataCollected    String   @map("data_collected") @db.VarChar(255)
+  permissions      String   @db.VarChar(255)
+  thirdPartyAccess Boolean  @default(false) @map("third_party_access")
+  privacySetting   String   @default("Medium") @map("privacy_setting") @db.VarChar(30)
+  lastActivityDate DateTime? @map("last_activity_date")
+  retentionMonths  Int      @default(12) @map("retention_months")
+  breachFound      Boolean  @default(false) @map("breach_found")
+  createdAt        DateTime @default(now()) @map("created_at")
+  updatedAt        DateTime @updatedAt @map("updated_at")
+  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("connected_platform")
+}
+
+model Consent {
+  id           Int       @id @default(autoincrement())
+  userId       Int       @map("user_id")
+  platformName String    @map("platform_name") @db.VarChar(120)
+  permission   String    @db.VarChar(160)
+  purpose      String    @db.VarChar(255)
+  status       String    @default("Granted") @db.VarChar(30)
+  grantedAt    DateTime  @default(now()) @map("granted_at")
+  expiresAt    DateTime? @map("expires_at")
+  sharedWith   String?   @default("Internal analytics") @map("shared_with") @db.VarChar(255)
+  createdAt    DateTime  @default(now()) @map("created_at")
+  updatedAt    DateTime  @updatedAt @map("updated_at")
+  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([status])
+  @@map("consent")
+}
+
+model RiskAssessment {
+  id             Int      @id @default(autoincrement())
+  userId         Int      @map("user_id")
+  score          Int
+  level          String   @db.VarChar(20)
+  factors        String
+  recommendation String
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([level])
+  @@map("risk_assessment")
+}
+
+model Alert {
+  id        Int      @id @default(autoincrement())
+  userId    Int      @map("user_id")
+  title     String   @db.VarChar(160)
+  message   String   @db.VarChar(255)
+  severity  String   @default("Medium") @db.VarChar(20)
+  isRead    Boolean  @default(false) @map("is_read")
+  source    String   @default("Risk Engine") @db.VarChar(80)
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([severity])
+  @@map("alert")
+}
+
+model DeletionRequest {
+  id           Int       @id @default(autoincrement())
+  userId       Int       @map("user_id")
+  platformName String    @map("platform_name") @db.VarChar(120)
+  dataType     String    @map("data_type") @db.VarChar(120)
+  reason       String    @db.VarChar(255)
+  status       String    @default("Pending") @db.VarChar(30)
+  adminNote    String?   @map("admin_note") @db.VarChar(255)
+  completedAt  DateTime? @map("completed_at")
+  createdAt    DateTime  @default(now()) @map("created_at")
+  updatedAt    DateTime  @updatedAt @map("updated_at")
+  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([status])
+  @@map("deletion_request")
+}
+
+model AuditLog {
+  id        Int      @id @default(autoincrement())
+  userId    Int?     @map("user_id")
+  action    String   @db.VarChar(160)
+  entity    String   @db.VarChar(80)
+  ipAddress String?  @map("ip_address") @db.VarChar(60)
+  details   String?
+  createdAt DateTime @default(now()) @map("created_at")
+  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@index([action])
+  @@index([createdAt])
+  @@map("audit_log")
+}
+
+model Notification {
+  id        Int      @id @default(autoincrement())
+  userId    Int      @map("user_id")
+  channel   String   @default("In-app") @db.VarChar(30)
+  subject   String   @db.VarChar(160)
+  body      String   @db.VarChar(255)
+  isSent    Boolean  @default(false) @map("is_sent")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("notification")
+}
+
+model Analytics {
+  id            Int      @id @default(autoincrement())
+  userId        Int      @map("user_id")
+  month         String   @db.VarChar(20)
+  exposureScore Int      @map("exposure_score")
+  riskScore     Int      @map("risk_score")
+  consentCount  Int      @map("consent_count")
+  platformCount Int      @map("platform_count")
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("analytics")
+}
+
+model Admin {
+  id         Int      @id @default(autoincrement())
+  userId     Int      @unique @map("user_id")
+  department String   @default("Privacy Operations") @db.VarChar(120)
+  privileges String   @default("users,risks,audit,deletions") @db.VarChar(255)
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("admin")
+}

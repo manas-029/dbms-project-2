@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}Analytics{% endblock %}
+{% block content %}
+<section class="app-layout">{% include "dashboard/_sidebar.html" %}
+<div class="content"><div class="page-head"><h1>Analytics dashboard</h1></div>
+    <div class="panel-grid">
+        <section class="panel"><h2>Privacy score trends</h2><canvas data-chart="trend" data-risk="{{ analytics|map(attribute='risk_score')|join(',') }}" data-exposure="{{ analytics|map(attribute='exposure_score')|join(',') }}" data-labels="{{ analytics|map(attribute='month')|join(',') }}"></canvas></section>
+        <section class="panel"><h2>Platform usage</h2><canvas data-chart="platforms" data-labels="{{ platforms|map(attribute='category')|join(',') }}"></canvas></section>
+        <section class="panel"><h2>Consent statistics</h2><canvas data-chart="consent" data-granted="{{ consents|selectattr('status','equalto','Granted')|list|length }}" data-revoked="{{ consents|selectattr('status','equalto','Revoked')|list|length }}"></canvas></section>
+    </div>
+</div></section>
+{% endblock %}

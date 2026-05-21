@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}Dashboard | Digital Footprint Tracker{% endblock %}
+{% block content %}
+<section class="app-layout">
+    {% include "dashboard/_sidebar.html" %}
+    <div class="content">
+        <div class="page-head"><div><p class="eyebrow">Privacy overview</p><h1>Hello, {{ user.name }}</h1></div><span class="chip {{ risk.level|lower }}">{{ risk.level }} risk</span></div>
+        <div class="metric-grid">
+            <article class="metric"><span>Digital footprint score</span><strong>{{ 100 - risk.score }}</strong></article>
+            <article class="metric"><span>Risk score</span><strong>{{ risk.score }}</strong></article>
+            <article class="metric"><span>Linked accounts</span><strong>{{ stats.platforms + stats.socials }}</strong></article>
+            <article class="metric"><span>Sensitive data found</span><strong>{{ stats.sensitive }}</strong></article>
+            <article class="metric"><span>Active consents</span><strong>{{ stats.consents }}</strong></article>
+            <article class="metric"><span>Cleanup tasks</span><strong>{{ stats.deletions }}</strong></article>
+        </div>
+        <section class="panel"><h2>Analytical dashboard</h2>
+            <div class="analytics-box-grid">
+                <article><span>Granted consents</span><strong>{{ stats.granted_consents }}</strong></article>
+                <article><span>Revoked consents</span><strong>{{ stats.revoked_consents }}</strong></article>
+                <article><span>Pending cleanup</span><strong>{{ stats.pending_cleanup }}</strong></article>
+                <article><span>Unread alerts</span><strong>{{ stats.alerts }}</strong></article>
+            </div>
+        </section>
+        <section class="panel"><h2>Activity timeline</h2>
+            <div class="timeline">
+                {% for alert in user.alerts[:4] %}<div><span></span><strong>{{ alert.title }}</strong><p>{{ alert.message }}</p></div>{% endfor %}
+                {% for item in user.deletion_requests[:3] %}<div><span></span><strong>Cleanup: {{ item.platform_name }}</strong><p>Status: {{ item.status }}</p></div>{% endfor %}
+            </div>
+        </section>
+    </div>
+</section>
+{% endblock %}

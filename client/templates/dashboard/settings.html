@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}Settings{% endblock %}
+{% block content %}
+<section class="app-layout">{% include "dashboard/_sidebar.html" %}
+<div class="content"><div class="page-head"><h1>Profile settings</h1></div>
+    <section class="panel"><form class="form-grid" method="post">
+        <label>Name<input name="name" value="{{ user.name }}" required></label>
+        <label>Phone<input name="phone" value="{{ user.profile.phone if user.profile else '' }}"></label>
+        <label>Public username<input name="public_username" value="{{ user.profile.public_username if user.profile else '' }}"></label>
+        <label>Location<input name="location" value="{{ user.profile.location if user.profile else '' }}"></label>
+        <label class="span-2">Privacy goal<input name="privacy_goal" value="{{ user.profile.privacy_goal if user.profile else '' }}"></label>
+        <button class="button" type="submit">Save settings</button>
+    </form></section>
+</div></section>
+{% endblock %}

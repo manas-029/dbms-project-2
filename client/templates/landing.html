@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}Digital Footprint Tracker{% endblock %}
+{% block content %}
+<section class="hero">
+    <div class="hero-copy">
+        <h1>Digital Footprint Tracker</h1>
+        <p>A simple place to track your online accounts, privacy permissions, risk level, and cleanup tasks.</p>
+        <div class="hero-actions">
+            <a class="button" href="{{ url_for('auth.register') }}">Start tracking</a>
+        </div>
+    </div>
+</section>
+
+<section class="section-grid">
+    <article><h3>Accounts</h3><p>Save public usernames and social profiles in one place.</p></article>
+    <article><h3>Consent</h3><p>Track which permissions are granted or revoked.</p></article>
+    <article><h3>Risk</h3><p>See a clear privacy risk score based on saved data.</p></article>
+    <article><h3>Cleanup</h3><p>Track old or sensitive data that should be removed.</p></article>
+</section>
+
+<section class="stats-band">
+    <div><strong>1</strong><span>personal privacy dashboard</span></div>
+    <div><strong>4</strong><span>cleanup status stages</span></div>
+    <div><strong>100</strong><span>point risk scale</span></div>
+</section>
+
+<section class="testimonials">
+    <h2>Privacy tracking made simple</h2>
+    <div class="cards">
+        <article><p>Save the accounts and permissions you want to monitor.</p><strong>Step 1</strong></article>
+        <article><p>Review risk, consent, and cleanup progress from your dashboard.</p><strong>Step 2</strong></article>
+    </div>
+</section>
+
+<footer class="footer">Digital Footprint Tracker</footer>
+{% endblock %}

@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}Footprint Tracker{% endblock %}
+{% block content %}
+<section class="app-layout">{% include "dashboard/_sidebar.html" %}
+<div class="content"><div class="page-head"><h1>Digital footprint tracker</h1></div>
+    <section class="panel"><h2>Add public social account</h2>
+        <form class="form-grid" method="post" action="{{ url_for('web.add_social_account') }}">
+            <input name="platform" placeholder="Social platform" required><input name="username" placeholder="Username" required>
+            <input name="profile_url" placeholder="Profile URL"><select name="visibility"><option>Public</option><option>Private</option></select>
+            <input name="sensitive_data" placeholder="Sensitive data visible"><button class="button" type="submit">Add social</button>
+        </form>
+    </section>
+    <section class="panel"><h2>Stored social accounts</h2>
+        <div class="table-wrap"><table><thead><tr><th>Platform</th><th>Username</th><th>Profile URL</th><th>Visibility</th><th>Sensitive data</th><th>Saved at</th><th>Action</th></tr></thead><tbody>
+        {% for account in socials %}<tr><td>{{ account.platform }}</td><td>{{ account.username }}</td><td>{{ account.profile_url or '-' }}</td><td>{{ account.visibility }}</td><td>{{ account.sensitive_data or '-' }}</td><td>{{ account.created_at.strftime('%Y-%m-%d %H:%M') }}</td><td><form method="post" action="{{ url_for('web.delete_social_account', account_id=account.id) }}"><button class="small-button danger-button" type="submit">Delete</button></form></td></tr>{% endfor %}
+        {% if not socials %}<tr><td colspan="7">No social accounts saved yet.</td></tr>{% endif %}
+        </tbody></table></div>
+    </section>
+</div></section>
+{% endblock %}

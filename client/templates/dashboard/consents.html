@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}Consent Manager{% endblock %}
+{% block content %}
+<section class="app-layout">{% include "dashboard/_sidebar.html" %}
+<div class="content"><div class="page-head"><h1>Consent manager</h1></div>
+    <section class="panel"><h2>Add consent record</h2>
+        <form class="form-grid" method="post">
+            <input name="platform_name" placeholder="Platform" required><input name="permission" placeholder="Permission" required>
+            <input name="purpose" placeholder="Purpose" required><input name="shared_with" placeholder="Shared with">
+            <select name="status"><option>Granted</option><option>Revoked</option></select><button class="button" type="submit">Save consent</button>
+        </form>
+    </section>
+    <section class="panel"><h2>Consent history</h2><div class="table-wrap"><table><thead><tr><th>Platform</th><th>Permission</th><th>Purpose</th><th>Status</th><th>Shared with</th><th>Action</th><th>Delete</th></tr></thead><tbody>
+        {% for c in consents %}<tr><td>{{ c.platform_name }}</td><td>{{ c.permission }}</td><td>{{ c.purpose }}</td><td><span class="chip {{ c.status|lower }}">{{ c.status }}</span></td><td>{{ c.shared_with }}</td><td><form method="post" action="{{ url_for('web.toggle_consent', consent_id=c.id) }}"><button class="small-button" type="submit">{{ 'Revoke' if c.status == 'Granted' else 'Grant' }}</button></form></td><td><form method="post" action="{{ url_for('web.delete_consent', consent_id=c.id) }}"><button class="small-button danger-button" type="submit">Delete</button></form></td></tr>{% endfor %}
+        {% if not consents %}<tr><td colspan="7">No consent records saved yet.</td></tr>{% endif %}
+    </tbody></table></div></section>
+</div></section>
+{% endblock %}

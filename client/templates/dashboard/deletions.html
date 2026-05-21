@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}Cleanup Tracker{% endblock %}
+{% block content %}
+<section class="app-layout">{% include "dashboard/_sidebar.html" %}
+<div class="content"><div class="page-head"><h1>Cleanup Tracker</h1><p class="muted">Track privacy cleanup tasks that you or an admin need to follow up.</p></div>
+    <section class="panel reminder-panel">
+        <h2>Reminder</h2>
+        {% if reminders %}
+            <div class="reminder-list">
+                {% for reminder in reminders %}
+                    <article><strong>{{ reminder.platform }}</strong><span>{{ reminder.message }}</span></article>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p class="muted">No pending cleanup reminders. Completed or rejected tasks do not need follow-up.</p>
+        {% endif %}
+    </section>
+    <section class="panel status-help">
+        <h2>How cleanup tasks move</h2>
+        <div class="explanation-grid">
+            <article><strong>Pending</strong><span>Submitted and waiting for admin review.</span></article>
+            <article><strong>In Progress</strong><span>Admin accepted it and is tracking the cleanup.</span></article>
+            <article><strong>Completed</strong><span>The cleanup task is marked as done.</span></article>
+            <article><strong>Rejected</strong><span>Admin declined it and should add a note.</span></article>
+        </div>
+    </section>
+    <section class="panel"><h2>Add cleanup task</h2><form class="form-grid" method="post">
+        <input name="platform_name" placeholder="Platform, app, or website name" required><input name="data_type" placeholder="Data to clean up, for example email, phone, posts" required><input name="reason" placeholder="Reason" required><button class="button" type="submit">Save task</button>
+    </form></section>
+    <section class="panel"><h2>Cleanup progress</h2><div class="table-wrap"><table><thead><tr><th>Platform</th><th>Data to clean up</th><th>Reason</th><th>Status</th><th>Admin note</th><th>Action</th></tr></thead><tbody>
+        {% for r in requests %}<tr><td>{{ r.platform_name }}</td><td>{{ r.data_type }}</td><td>{{ r.reason }}</td><td><span class="chip">{{ r.status }}</span></td><td>{{ r.admin_note or '-' }}</td><td><form method="post" action="{{ url_for('web.delete_cleanup_task', request_id=r.id) }}"><button class="small-button danger-button" type="submit">Delete</button></form></td></tr>{% endfor %}
+        {% if not requests %}<tr><td colspan="6">No cleanup tasks added yet.</td></tr>{% endif %}
+    </tbody></table></div></section>
+</div></section>
+{% endblock %}

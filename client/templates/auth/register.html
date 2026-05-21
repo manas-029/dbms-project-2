@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}Register | Digital Footprint Tracker{% endblock %}
+{% block content %}
+<section class="auth-shell">
+    <form class="auth-card" method="post">
+        <h1>Create account</h1>
+        <p class="muted">Password must include uppercase, lowercase, number, and 8+ characters.</p>
+        <label>Name<input name="name" required></label>
+        <label>Email<input type="email" name="email" required></label>
+        <label>Password<input type="password" name="password" required></label>
+        <button class="button full" type="submit">Register</button>
+    </form>
+</section>
+{% endblock %}

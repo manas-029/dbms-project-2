@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block title %}Alerts Center{% endblock %}
+{% block content %}
+<section class="app-layout">{% include "dashboard/_sidebar.html" %}
+<div class="content"><div class="page-head"><h1>Alerts center</h1><a class="button" href="{{ url_for('web.alerts', generate=1) }}">Generate alerts</a></div>
+    <div class="cards">
+        {% for a in alerts %}<article class="alert-card {{ a.severity|lower }}"><div><span class="chip {{ a.severity|lower }}">{{ a.severity }}</span><h2>{{ a.title }}</h2><p>{{ a.message }}</p><small>{{ a.source }}</small></div>{% if not a.is_read %}<form method="post" action="{{ url_for('web.mark_alert_read', alert_id=a.id) }}"><button class="small-button" type="submit">Mark read</button></form>{% endif %}</article>{% endfor %}
+    </div>
+</div></section>
+{% endblock %}

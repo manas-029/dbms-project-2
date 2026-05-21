@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}Risk Center{% endblock %}
+{% block content %}
+<section class="app-layout">{% include "dashboard/_sidebar.html" %}
+<div class="content" data-auto-refresh="10000"><div class="page-head"><div><h1>Risk center</h1><p class="muted">Refreshes automatically every 10 seconds after you add accounts or change consent.</p></div><span class="chip {{ risk.level|lower }}">{{ risk.level }}</span></div>
+    <section class="risk-panel"><div class="score-ring large">{{ risk.score }}</div><div><h2>{{ risk.level }} privacy risk</h2><p>Score range: 0 is safest, 100 is highest risk.</p><p><strong>Suggestion:</strong> {{ risk.recommendation }}</p></div></section>
+    <section class="panel"><h2>Why this score?</h2>
+        <div class="explanation-grid">
+            {% for factor in factors %}
+                <article><strong>{{ factor.label }}</strong><span>{{ factor.detail }}</span></article>
+            {% endfor %}
+        </div>
+    </section>
+    <section class="panel"><h2>Risk history</h2><div class="table-wrap"><table><thead><tr><th>Date</th><th>Score</th><th>Level</th><th>Factors</th></tr></thead><tbody>
+        {% for r in risks %}<tr><td>{{ r.created_at.strftime('%Y-%m-%d') }}</td><td>{{ r.score }}</td><td>{{ r.level }}</td><td>{{ r.factors }}</td></tr>{% endfor %}
+    </tbody></table></div></section>
+</div></section>
+{% endblock %}
